@@ -3,11 +3,13 @@ import { useContext, useState } from "react";
 import CupTitle from "../cupTitle/CupTitle";
 import InitialCupPage from "../initialCup/InitialCupPage";
 import PlayersPage, { Player } from "../players/PlayersPage";
+import TeamsPage, { Team } from "../teams/TeamsPage";
 
 const RootPage = () => {
   const stageContext = useContext(StageContext);
   const [cupTitle, setCupTitle] = useState("");
   const [players, setPlayers] = useState<Player[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
 
   if (stageContext?.stage === "PLAYERS")
     return (
@@ -19,9 +21,9 @@ const RootPage = () => {
 
   if (stageContext?.stage === "TEAMS")
     return (
-      <div className="my-40 w-[35rem] gap-2 flex flex-col">
+      <div className="my-10 gap-2 flex flex-col">
         <CupTitle title={cupTitle} />
-        Teams
+        <TeamsPage teamsUpdate={setTeams} />
       </div>
     );
 
