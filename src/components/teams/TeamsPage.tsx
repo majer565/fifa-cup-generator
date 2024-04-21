@@ -2,7 +2,6 @@ import { StageContext } from "@/App";
 import { AVAILABLE_TEAMS } from "@/assets/teams";
 import { useContext, useState } from "react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import TeamsList from "./TeamsList";
 
 export interface Team {
@@ -18,19 +17,16 @@ interface TeamsPageProps {
 const TeamsPage = ({ teamsUpdate }: TeamsPageProps) => {
   const stageContext = useContext(StageContext);
   const [teams, setTeams] = useState<Team[]>(AVAILABLE_TEAMS);
-  const [input, setInput] = useState<string>("");
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
+  const handleTeamsAdd = (team: Team) => {
+    const newTeams = [...teams];
+    newTeams.push(team);
+    setTeams(newTeams);
   };
 
-  const handleTeamsUpdate = (teamId: string) => {
-    const id = Number(teamId);
-    if (id) {
-      const newTeams = teams.filter((t) => t.id !== id);
-      setTeams(newTeams);
-      setInput("");
-    }
+  const handleTeamRemove = (id: number) => {
+    const newTeams = teams.filter((t) => t.id !== id);
+    setTeams(newTeams);
   };
 
   const handleSaveTeams = () => {
@@ -38,17 +34,18 @@ const TeamsPage = ({ teamsUpdate }: TeamsPageProps) => {
     stageContext?.setStage("CLASSIFICATION");
   };
 
+  const checkIfTeamsPresent = (id: number) => {
+    const index = teams.findIndex((t) => t.id === id);
+    return index === -1 ? false : true;
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      <TeamsList teams={teams} />
+      <TeamsList onTeamRemove={handleTeamRemove} onTeamAdd={handleTeamsAdd} isChecked={checkIfTeamsPresent} />
       <div>
-        <Input placeholder="Enter team id" value={input} onChange={handleInputChange} />
-        <div className="my-3 flex justify-between">
-          <Button onClick={() => handleTeamsUpdate(input)}>Remove</Button>
-          <Button variant="outline" onClick={handleSaveTeams}>
-            Save
-          </Button>
-        </div>
+        <Button className="w-full" variant="outline" onClick={handleSaveTeams}>
+          Save
+        </Button>
       </div>
     </div>
   );
